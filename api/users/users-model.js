@@ -39,11 +39,11 @@ async function findBy(filter) {
       }
     ]
    */
-  const filteredUsers = await db
+  const [filteredUsers] = await db
     .select('u.user_id', 'u.username', 'u.password', 'r.role_name')
     .from('users as u')
     .join('roles as r', 'r.role_id', 'u.role_id')
-    .where(filter)
+    .where('username', filter)
   return filteredUsers
 }
 
@@ -58,7 +58,7 @@ async function findById(user_id) {
       "role_name": "instructor"
     }
    */
-  const user = await db
+  const [user] = await db
     .select('u.user_id', 'u.username', 'r.role_name')
     .from('users as u')
     .join('roles as r', 'r.role_id', 'u.role_id')

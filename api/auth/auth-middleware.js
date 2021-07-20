@@ -43,6 +43,8 @@ const only = role_name => (req, res, next) => {
 
     Pull the decoded token from the req object, to avoid verifying it again!
   */
+ const token = req.headers.authorization
+ console.log('checking token', token)
  next()
 }
 
@@ -56,9 +58,11 @@ const checkUsernameExists = async (req, res, next) => {
     }
   */
  const users = await Users.findBy(req.body.username)
+ console.log(users)
  if(!users) {
    next({ status: 401, message: "Invalid credentials"})
  } else {
+   req.user = users
    next()
  }
 }
@@ -83,7 +87,16 @@ const validateRoleName = (req, res, next) => {
       "message": "Role name can not be longer than 32 chars"
     }
   */
- next()
+ if (!req.body.role_name || !req.body.role_name.trim()) {
+   req.role_name = 'student'
+   next()
+ } else if (req.body.role_name.trim() === 'admin') {
+  next({ status: 422, message: 'Role name can not be admin'})
+ } else if (req.body.role_name.trim().length > 32) {
+   next({ status: 422, message: 'Role name can not be longer than 32 chars'})
+ } else {
+    next()
+ }
 }
 
 module.exports = {
