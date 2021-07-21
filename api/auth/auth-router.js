@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const { checkUsernameExists, validateRoleName } = require('./auth-middleware');
 const { JWT_SECRET } = require("../secrets"); // use this secret!
 const Users = require('../users/users-model')
+const jwt = require('jsonwebtoken')
 const tokenBuilder = require('./token-builder')
 
 router.post("/register", validateRoleName, (req, res, next) => {
@@ -52,10 +53,7 @@ router.post("/login", checkUsernameExists, (req, res, next) => {
    */
   const { username, password } = req.body
 
-console.log(bcrypt.compareSync(req.user.password, req.body.password) ? true : false)
-console.log(req.body.password)
-console.log(req.user.password)
-      if(bcrypt.compareSync(req.user.password, password)) {
+      if(bcrypt.compareSync(password, req.user.password)) {
         const token = tokenBuilder(req.body)
         res.status(200).json({
           message: `${username} is back!`,

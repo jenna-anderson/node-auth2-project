@@ -44,7 +44,6 @@ const only = role_name => (req, res, next) => {
     Pull the decoded token from the req object, to avoid verifying it again!
   */
  const token = req.headers.authorization
- console.log('checking token', token)
  next()
 }
 
@@ -57,13 +56,17 @@ const checkUsernameExists = async (req, res, next) => {
       "message": "Invalid credentials"
     }
   */
- const users = await Users.findBy(req.body.username)
- console.log(users)
- if(!users) {
-   next({ status: 401, message: "Invalid credentials"})
- } else {
-   req.user = users
-   next()
+ try {
+   const users = await Users.findBy({username: req.body.username})
+   if(!users) {
+     next({ status: 401, message: "Invalid credentials"})
+   } else {
+     req.user = users
+     next()
+   }
+   
+ } catch (err) {
+   next(err)
  }
 }
 

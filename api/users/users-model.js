@@ -43,7 +43,7 @@ async function findBy(filter) {
     .select('u.user_id', 'u.username', 'u.password', 'r.role_name')
     .from('users as u')
     .join('roles as r', 'r.role_id', 'u.role_id')
-    .where('username', filter)
+    .where(filter)
   return filteredUsers
 }
 
